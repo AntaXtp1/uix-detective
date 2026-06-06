@@ -22,8 +22,19 @@
     location.port === '8080'
   );
 
-  // Dev mode toggle — set via localStorage atau otomatis kalau localhost
-  const _isDevMode = _isLocalhost || localStorage.getItem('uix_dev_mode') === '1';
+  // ── Secret URL bypass: ?_dbg=uixdev2025 ──
+  // Kunjungi https://uix-detective.pages.dev?_dbg=uixdev2025 buat disable security
+  // Jangan share URL ini ke publik!
+  const _urlParams   = new URLSearchParams(location.search);
+  const _urlBypass   = _urlParams.get('_dbg') === 'uixdev2025';
+
+  // Kalau URL bypass aktif, simpan ke localStorage biar persist setelah reload
+  if (_urlBypass) {
+    try { localStorage.setItem('uix_dev_mode', '1'); } catch (_) {}
+  }
+
+  // Dev mode toggle — set via localStorage, URL bypass, atau otomatis kalau localhost
+  const _isDevMode = _isLocalhost || _urlBypass || localStorage.getItem('uix_dev_mode') === '1';
 
   // Kalau dev mode, langsung skip semua proteksi
   // Token generator tetap didefinisikan (dibutuhkan app.js)
