@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UIX Detective — AI Prompt Generator for UI/UX Reverse Engineering</title>
+  <meta name="description" content="Feed it a URL, get a complete AI coding blueprint. Reverse engineer any website's design system in seconds using MiMo AI.">
+  <meta name="theme-color" content="#6366f1">
+  <meta property="og:title" content="UIX Detective — AI UI/UX Reverse Engineer">
+  <meta property="og:description" content="Feed it a URL, get a complete AI coding blueprint.">
+
+  <!-- Preconnect fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ==================== ANIMATED BG ==================== -->
+  <div class="bg-mesh" aria-hidden="true"></div>
+  <div class="bg-orb bg-orb-1" aria-hidden="true"></div>
+  <div class="bg-orb bg-orb-2" aria-hidden="true"></div>
+  <div class="bg-orb bg-orb-3" aria-hidden="true"></div>
+
+  <!-- ==================== HEADER ==================== -->
+  <header class="site-header" role="banner">
+    <div class="container">
+      <div class="header-inner">
+        <a href="/" class="logo" id="logo-link" aria-label="UIX Detective Home">
+          <div class="logo-icon" aria-hidden="true">🕵️</div>
+          <div class="logo-text">UIX <span>Detective</span></div>
+        </a>
+        <div style="display:flex;align-items:center;gap:12px">
+          <!-- New Analysis button — muncul pas ada hasil -->
+          <button id="new-analysis-btn" class="btn-new-analysis" style="display:none" aria-label="Start new analysis">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            New Analysis
+          </button>
+          <div class="header-badge" aria-label="Powered by MiMo AI">
+            <div class="badge-dot" aria-hidden="true"></div>
+            <span>Powered by MiMo AI</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN APP ==================== -->
+  <main class="app-wrapper" role="main">
+    <div class="container">
+
+      <!-- Hero -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-eyebrow" aria-hidden="true">
+          <span>⚡</span> AI-Powered UI/UX Reverse Engineering
+        </div>
+        <h1 class="hero-title" id="hero-title">
+          Feed it a URL.<br>
+          Get a <span class="gradient-text">Coding Blueprint.</span>
+        </h1>
+        <p class="hero-subtitle">
+          Tempel link refrensi anda, Mimo AI akan membantu
+          bedah design tersebut dari warna, font, layout, sampai komponen
+          yang dapat anda gunakan sebagai refrensi design project anda.
+        </p>
+      </section>
+
+      <!-- Input Section -->
+      <section class="input-section" aria-label="Website Analysis Input">
+        <div class="input-card">
+          <div class="input-row">
+            <div class="url-input-wrapper">
+              <input
+                type="url"
+                id="url-input"
+                class="url-input"
+                placeholder="https://stripe.com atau vercel.com"
+                autocomplete="url"
+                spellcheck="false"
+                aria-label="Website URL to analyze"
+              >
+              <span class="url-input-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </span>
+            </div>
+
+            <select id="model-select" class="model-select" aria-label="Select MiMo model">
+              <option value="mimo-v2-flash" selected>⚡ Flash · 5x/hari</option>
+              <option value="mimo-v2.5">🔮 v2.5 Omni · 3x/hari</option>
+            </select>
+
+            <button id="analyze-btn" class="analyze-btn" aria-label="Start website analysis">
+              <div id="btn-spinner" class="btn-spinner" aria-hidden="true"></div>
+              <svg id="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              <span id="btn-text">Analyze Design</span>
+            </button>
+          </div>
+          <!-- Limit Badge -->
+          <div id="limit-badge" class="limit-badge" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <!-- Main Layout -->
+      <div class="main-layout">
+
+        <!-- Workspace -->
+        <section aria-label="Analysis Workspace">
+          <div class="workspace-card">
+
+            <!-- Workspace Header -->
+            <div class="workspace-header">
+              <div class="workspace-tabs" role="tablist" aria-label="Output format tabs">
+                <button class="workspace-tab active" data-tab="rendered" role="tab" aria-selected="true" aria-controls="rendered-panel" id="tab-rendered">
+                  Rendered
+                </button>
+                <button class="workspace-tab" data-tab="raw" role="tab" aria-selected="false" aria-controls="raw-panel" id="tab-raw">
+                  &lt;/&gt; Raw
+                </button>
+              </div>
+              <div class="workspace-actions">
+                <div class="stats-badge" id="stats-badge" aria-live="polite">
+                  <span id="stats-words">0</span> words
+                  <span style="color:var(--text-muted)">·</span>
+                  <span id="stats-chars">0</span> chars
+                </div>
+              </div>
+            </div>
+
+            <!-- Thinking Panel -->
+            <div id="thinking-panel" class="thinking-panel" role="region" aria-label="AI Reasoning">
+              <div id="thinking-header" class="thinking-header" aria-expanded="false">
+                <div class="thinking-title">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                  Deep Thinking Process
+                </div>
+                <span class="thinking-toggle" aria-hidden="true">▼</span>
+              </div>
+              <div id="thinking-body" class="thinking-body" role="region">
+                <p id="thinking-body-text"></p>
+              </div>
+            </div>
+
+            <!-- Status Bar -->
+            <div id="status-bar" class="status-bar" role="status" aria-live="polite">
+              <div class="status-dot" aria-hidden="true"></div>
+              <span id="status-text"></span>
+            </div>
+
+            <!-- Workspace Body -->
+            <div id="workspace-body" class="workspace-body">
+
+              <!-- Empty State -->
+              <div id="empty-state" class="empty-state workspace-panel active" aria-label="Empty state">
+                <div class="empty-icon" aria-hidden="true">🔍</div>
+                <h2 class="empty-title">Belum ada yang dianalisis</h2>
+                <p class="empty-desc">
+                  Paste URL website di atas, tekan Analyze Design,
+                  dan biarkan MiMo AI bedah habis desainnya buat lo.
+                </p>
+              </div>
+
+              <!-- Shimmer Loading -->
+              <div id="shimmer-lines" class="shimmer-lines" aria-hidden="true">
+                <div class="shimmer-line w-60"></div>
+                <div class="shimmer-line w-90"></div>
+                <div class="shimmer-line w-80"></div>
+                <div class="shimmer-line w-40"></div>
+                <br>
+                <div class="shimmer-line w-60"></div>
+                <div class="shimmer-line w-80"></div>
+                <div class="shimmer-line w-90"></div>
+                <div class="shimmer-line w-60"></div>
+                <div class="shimmer-line w-40"></div>
+                <br>
+                <div class="shimmer-line w-80"></div>
+                <div class="shimmer-line w-60"></div>
+                <div class="shimmer-line w-90"></div>
+              </div>
+
+              <!-- Rendered Output Panel -->
+              <div id="rendered-panel" class="workspace-panel" role="tabpanel" aria-labelledby="tab-rendered">
+                <article id="rendered-output" class="rendered-output" aria-label="Rendered analysis output"></article>
+              </div>
+
+              <!-- Raw Output Panel -->
+              <div id="raw-panel" class="workspace-panel raw-output" role="tabpanel" aria-labelledby="tab-raw">
+                <textarea
+                  id="raw-textarea"
+                  class="raw-textarea"
+                  readonly
+                  aria-label="Raw markdown output"
+                  placeholder="Output markdown mentah akan muncul di sini..."
+                ></textarea>
+              </div>
+
+            </div><!-- /workspace-body -->
+
+            <!-- Workspace Footer -->
+            <div class="workspace-footer">
+              <div class="action-group">
+                <!-- Copy Button -->
+                <button id="copy-btn" class="btn-action" disabled aria-label="Copy prompt to clipboard">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  Copy Prompt
+                </button>
+
+                <!-- Download Button (with dropdown) -->
+                <div class="download-wrapper">
+                  <button id="download-btn" class="btn-action" disabled aria-label="Download prompt" aria-haspopup="true" aria-expanded="false">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="7 10 12 15 17 10"></polyline>
+                      <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Download
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+                  <div id="download-menu" class="download-dropdown" role="menu" aria-label="Download format options">
+                    <button id="download-md" class="download-item" role="menuitem">
+                      <span class="item-ext ext-md">.md</span>
+                      Markdown File
+                    </button>
+                    <button id="download-txt" class="download-item" role="menuitem">
+                      <span class="item-ext ext-txt">.txt</span>
+                      Plain Text
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Token Usage -->
+              <div id="token-row" class="token-info" style="display:none" aria-label="Token usage">
+                <div class="token-chip">
+                  <span>prompt</span>
+                  <span class="val" id="token-prompt">–</span>
+                </div>
+                <div class="token-chip">
+                  <span>completion</span>
+                  <span class="val" id="token-completion">–</span>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /workspace-card -->
+        </section>
+
+        <!-- ==================== SIDEBAR ==================== -->
+        <aside class="sidebar" aria-label="History and tips sidebar">
+
+          <!-- History Card -->
+          <div class="sidebar-card" aria-labelledby="history-title">
+            <div class="sidebar-header">
+              <div class="sidebar-title" id="history-title">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                History
+              </div>
+              <button id="clear-history" class="sidebar-action" aria-label="Clear all history">
+                Clear all
+              </button>
+            </div>
+            <div id="history-list" class="history-list" role="list" aria-label="Analysis history">
+              <div class="history-empty">
+                <p>Belum ada history nih.<br>Analyze website pertama lo dulu!</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tips Card -->
+          <div class="sidebar-card" aria-labelledby="tips-title">
+            <div class="sidebar-header">
+              <div class="sidebar-title" id="tips-title">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                Pro Tips
+              </div>
+            </div>
+            <div class="tips-list">
+              <div class="tip-item">
+                <span class="tip-icon" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </span>
+                <p class="tip-text"><strong>Flash</strong> cepat &amp; hemat (5x/hari). <strong>v2.5</strong> lebih detail tapi 3x/hari.</p>
+              </div>
+              <div class="tip-item">
+                <span class="tip-icon" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </span>
+                <p class="tip-text">Paste URL lengkap dengan <code>https://</code> — website publik, tanpa login.</p>
+              </div>
+              <div class="tip-item">
+                <span class="tip-icon" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                </span>
+                <p class="tip-text">Copy hasilnya ke <strong>Claude atau ChatGPT</strong> buat langsung rebuild UI-nya.</p>
+              </div>
+              <div class="tip-item">
+                <span class="tip-icon" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                </span>
+                <p class="tip-text">Download <code>.md</code> buat arsip. History tersimpan di browser lo.</p>
+              </div>
+            </div>
+          </div>
+
+        </aside>
+
+      </div><!-- /main-layout -->
+
+    </div><!-- /container -->
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+        <p class="footer-text">
+          UIX Detective · Built with
+          <a href="https://xiaomimimo.com" target="_blank" rel="noopener">MiMo AI</a>
+          · Gak ada desain yang aman dari mata-mata AI 🕵️
+        </p>
+    </div>
+  </footer>
+
+  <!-- ==================== TOAST CONTAINER ==================== -->
+  <div id="toast-container" class="toast-container" aria-live="assertive" aria-atomic="true"></div>
+
+  <!-- Security layer FIRST — jangan diubah urutannya -->
+  <script src="js/security.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

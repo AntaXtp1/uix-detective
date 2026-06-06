@@ -1,0 +1,14 @@
+# Cloudflare Pages — Security Headers
+# File ini dibaca otomatis oleh Cloudflare Pages saat deploy
+
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  X-XSS-Protection: 1; mode=block
+
+/api/*
+  Access-Control-Allow-Methods: POST, OPTIONS
+  Access-Control-Allow-Headers: Content-Type, X-Request-Token
+  Cache-Control: no-store

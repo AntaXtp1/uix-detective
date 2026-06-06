@@ -1,0 +1,16 @@
+{
+  "name": "ui-ux-reverse-engineer",
+  "version": "1.0.0",
+  "description": "AI Prompt Generator for UI/UX Reverse Engineering using MiMo API",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step needed'",
+    "start": "vercel dev"
+  },
+  "devDependencies": {
+    "vercel": "^37.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
